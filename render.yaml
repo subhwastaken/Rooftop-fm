@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: rooftop-fm
+    env: docker
+    plan: free
+    region: oregon
+    dockerfilePath: Dockerfile
+    healthCheckPath: /
+    autoDeploy: true
+    envVars:
+      - key: PORT
+        value: 3000
+      - key: HOSTNAME
+        value: 0.0.0.0
+      - key: NODE_ENV
+        value: production

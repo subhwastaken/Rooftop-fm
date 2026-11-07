@@ -157,8 +157,28 @@ function sanitizeTrack(raw, actor) {
 
 app.prepare().then(() => {
   const httpServer = createServer((req, res) => {
+    // Ultra-lightweight health check for keep-alive pingers (UptimeRobot, etc.)
+    if (req.url === "/api/health" || req.url === "/healthz") {
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ status: "ok", uptimeSec: Math.floor(process.uptime()), timestamp: Date.now() }));
+      return;
+    }
     handle(req, res);
   });
+
+  // Optional auto-keepalive if running on Render with RENDER_EXTERNAL_URL
+  const externalUrl = process.env.RENDER_EXTERNAL_URL || process.env.PUBLIC_URL;
+  if (externalUrl && !dev) {
+    const pingIntervalMs = 1000 * 60 * 12; // Every 12 minutes (under Render's 15-minute idle limit)
+    setInterval(async () => {
+      try {
+        await fetch(`${externalUrl}/api/health`);
+        console.log(`[Keepalive] Self-pinged ${externalUrl}/api/health successfully.`);
+      } catch (err) {
+        console.warn(`[Keepalive] Self-ping failed:`, err?.message || err);
+      }
+    }, pingIntervalMs);
+  }
 
   const io = new SocketIOServer(httpServer, {
     path: "/api/socketio",

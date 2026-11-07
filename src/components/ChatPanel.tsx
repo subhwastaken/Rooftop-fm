@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Mic, MicOff, Send } from "lucide-react";
+import { Avatar } from "./Avatar";
 import type { ChatMessage, Participant } from "@/lib/types";
 
 interface ChatPanelProps {
@@ -48,8 +49,8 @@ export function ChatPanel({ participants, messages, selfId, typingNames, onSend,
       <div className="mb-3 flex flex-wrap gap-1.5 border-b border-[var(--line)] pb-3">
         {participants.map((p) => (
           <span key={p.socketId} className="well flex items-center gap-1.5 rounded-full py-1 pl-1.5 pr-3 text-xs font-bold">
-            <span className="flex h-6 w-6 items-center justify-center rounded-full text-sm" style={{ backgroundColor: `${p.color}44` }}>
-              {p.emoji}
+            <span className="flex h-6 w-6 items-center justify-center overflow-hidden rounded-full shadow-sm" style={{ backgroundColor: `${p.color}44` }}>
+              <Avatar src={p.emoji} name={p.name} size={48} className="h-full w-full object-cover" />
             </span>
             <span className="max-w-[110px] truncate">{p.name}</span>
             {p.socketId === selfId && <span className="font-semibold text-[var(--ink-faint)]">you</span>}
@@ -76,8 +77,9 @@ export function ChatPanel({ participants, messages, selfId, typingNames, onSend,
           return (
             <div key={msg.id} className={`flex flex-col ${mine ? "items-end" : "items-start"}`}>
               {!mine && (
-                <span className="mb-0.5 px-2 text-[11px] font-bold" style={{ color: msg.senderColor }}>
-                  {msg.senderEmoji} {msg.senderName}
+                <span className="mb-0.5 flex items-center gap-1.5 px-2 text-[11px] font-bold" style={{ color: msg.senderColor }}>
+                  <Avatar src={msg.senderEmoji} name={msg.senderName} size={32} className="h-4 w-4 rounded-full object-cover" />
+                  <span>{msg.senderName}</span>
                 </span>
               )}
               <p

@@ -281,9 +281,12 @@ export function ChannelRoom({
       <header className="glass relative z-30 flex shrink-0 flex-wrap items-center justify-between gap-2 rounded-3xl px-3 py-2 sm:rounded-full sm:px-4">
         {/* Brand + Channel Name + Invite Code */}
         <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[var(--line)] bg-black/30">
-            <Disc3
-              className="h-5 w-5 text-[var(--amber)] animate-vinyl"
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-white/20 bg-black/40 shadow-inner">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/favicon-96x96.png"
+              alt="Rooftop.fm logo"
+              className="h-full w-full object-cover animate-vinyl"
               style={{ animationPlayState: room.playback.isPlaying ? "running" : "paused" }}
             />
           </span>

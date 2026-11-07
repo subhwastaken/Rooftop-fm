@@ -115,12 +115,14 @@ function snapshot(room) {
 }
 
 function sanitizeUser(payload) {
-  const name = cleanText(payload?.userName, 24);
+  const name = cleanText(payload?.userName ?? payload?.name, 24);
   if (!name) return null;
   return {
     name,
-    emoji: cleanText(payload?.userEmoji, 8) || "🙂",
-    color: /^#[0-9a-fA-F]{6}$/.test(payload?.userColor || "") ? payload.userColor : "#ffb36b"
+    emoji: cleanText(payload?.userEmoji ?? payload?.emoji, 128) || "/avatars/avatar-01.png",
+    color: /^#[0-9a-fA-F]{6}$/.test(payload?.userColor || payload?.color || "")
+      ? (payload.userColor || payload.color)
+      : "#ffb36b"
   };
 }
 

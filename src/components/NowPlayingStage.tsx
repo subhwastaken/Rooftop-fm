@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Copy, Heart, Pause, Play, SkipBack, SkipForward, Volume2, VolumeX } from "lucide-react";
 import { ToneArm } from "./ToneArm";
+import { Avatar } from "./Avatar";
 import { formatClock } from "@/lib/identity";
 import type { TogetherClock } from "@/lib/useRoom";
 import type { Participant, PlaybackState } from "@/lib/types";
@@ -281,11 +282,11 @@ export function NowPlayingStage({
                   />
                 )}
                 <span
-                  className="relative flex h-9 w-9 items-center justify-center rounded-full border-2 border-[#2a1b1d] text-lg"
+                  className="relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border-2 border-[#2a1b1d] shadow-sm"
                   style={{ backgroundColor: `${p.color}55` }}
                   title={p.name}
                 >
-                  {p.emoji}
+                  <Avatar src={p.emoji} name={p.name} size={72} className="h-full w-full object-cover" />
                 </span>
               </span>
             ))}

@@ -10,9 +10,17 @@ export function useSocket() {
   useEffect(() => {
     const instance = io({ path: "/api/socketio", transports: ["websocket", "polling"] });
     setSocket(instance);
-    instance.on("connect", () => setConnected(true));
-    instance.on("disconnect", () => setConnected(false));
+    if (instance.connected) setConnected(true);
+
+    const onConnect = () => setConnected(true);
+    const onDisconnect = () => setConnected(false);
+
+    instance.on("connect", onConnect);
+    instance.on("disconnect", onDisconnect);
+
     return () => {
+      instance.off("connect", onConnect);
+      instance.off("disconnect", onDisconnect);
       instance.disconnect();
     };
   }, []);

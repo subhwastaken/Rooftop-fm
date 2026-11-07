@@ -27,18 +27,19 @@ export function ToneArm({ isPlaying, progress }: ToneArmProps) {
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        {/* --- Hand-drawn Style Fixed Base & Rest Cradle --- */}
-        {/* Circular base mounting puck */}
+        {/* --- Sunset Dusk / Rose & Tangerine Hand-drawn Base & Rest Cradle --- */}
+        {/* Circular base mounting puck in Midnight Plum & Pale Rose */}
         <circle
           cx="86"
           cy="38"
           r="14.5"
-          fill="#2a181e"
-          stroke="#fff4e6"
+          fill="#24141e"
+          stroke="#ffe3dd"
           strokeWidth="2.5"
         />
-        <circle cx="86" cy="38" r="7.5" fill="#ffb36b" />
-        <circle cx="86" cy="38" r="2.5" fill="#2a181e" />
+        {/* Twilight Lavender center */}
+        <circle cx="86" cy="38" r="7.5" fill="#c28cae" />
+        <circle cx="86" cy="38" r="2.5" fill="#24141e" />
 
         {/* Minimalist rest stand cradle (parks the arm when paused) */}
         <line
@@ -46,13 +47,13 @@ export function ToneArm({ isPlaying, progress }: ToneArmProps) {
           y1="94"
           x2="85"
           y2="108"
-          stroke="#fff4e6"
+          stroke="#ffe3dd"
           strokeWidth="2.5"
           strokeLinecap="round"
         />
         <path
           d="M 80 96 Q 85 100 90 96"
-          stroke="#fff4e6"
+          stroke="#ffe3dd"
           strokeWidth="2.5"
           fill="none"
           strokeLinecap="round"
@@ -66,15 +67,15 @@ export function ToneArm({ isPlaying, progress }: ToneArmProps) {
             transition: "transform 0.85s cubic-bezier(0.25, 1, 0.45, 1)",
           }}
         >
-          {/* Cute rear counterweight */}
+          {/* Twilight Lavender rear counterweight */}
           <rect
             x="79"
             y="11"
             width="14"
             height="14"
             rx="4"
-            fill="#ffb36b"
-            stroke="#2a181e"
+            fill="#c28cae"
+            stroke="#24141e"
             strokeWidth="2"
           />
           <line
@@ -82,25 +83,25 @@ export function ToneArm({ isPlaying, progress }: ToneArmProps) {
             y1="25"
             x2="86"
             y2="38"
-            stroke="#fff4e6"
+            stroke="#ffe3dd"
             strokeWidth="3"
             strokeLinecap="round"
           />
 
-          {/* Simple warm cream hand-drawn arm tube */}
+          {/* Pale Rose hand-drawn arm tube */}
           <path
             d="M 86 38 
                L 86 68 
                C 86 110 74 140 64 170 
                C 56 190 53 210 53 226"
-            stroke="#fff4e6"
+            stroke="#ffe3dd"
             strokeWidth="3.2"
             strokeLinecap="round"
             strokeLinejoin="round"
             fill="none"
           />
 
-          {/* Cozy illustrated Cartridge & Headshell */}
+          {/* Sunset Tangerine illustrated Cartridge & Headshell */}
           <g transform="translate(53, 226) rotate(10)">
             {/* Headshell body */}
             <rect
@@ -109,28 +110,28 @@ export function ToneArm({ isPlaying, progress }: ToneArmProps) {
               width="10"
               height="16"
               rx="3.5"
-              fill="#ff9e7d"
-              stroke="#2a181e"
+              fill="#ff7e5f"
+              stroke="#24141e"
               strokeWidth="2"
             />
             {/* Cute finger lift handle */}
             <path
               d="M 5 8 Q 10 8 9 4"
-              stroke="#fff4e6"
+              stroke="#ffe3dd"
               strokeWidth="2"
               strokeLinecap="round"
               fill="none"
             />
             {/* Stylus needle tip */}
-            <circle cx="0" cy="20" r="1.5" fill="#fff4e6" />
-            {/* Subtle cozy needle glow when playing */}
+            <circle cx="0" cy="20" r="1.5" fill="#ffe3dd" />
+            {/* Sunset needle glow when playing */}
             {isPlaying && (
               <circle
                 cx="0"
                 cy="20"
                 r="3.5"
-                fill="#ffb36b"
-                opacity="0.65"
+                fill="#ff7e5f"
+                opacity="0.75"
                 className="animate-pulse"
               />
             )}

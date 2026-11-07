@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from "react";
 import type { Socket } from "socket.io-client";
-import { ArrowRight, Dices, Disc3, Loader2, Plus } from "lucide-react";
-import { EMPTY_IDENTITY, identityFor, normalizeCode, randomIdentity } from "@/lib/identity";
+import { ArrowRight, Dices, Loader2, Plus } from "lucide-react";
+import { EMPTY_IDENTITY, identityFor, normalizeCode, randomAvatar, randomIdentity, resolveAvatarUrl } from "@/lib/identity";
+import { Avatar } from "@/components/Avatar";
 import type { Identity, RoomSnapshot } from "@/lib/types";
 
 const STORAGE_KEY = "sideb:identity";
@@ -41,7 +42,13 @@ export function EntryScreen({ socket, connected, initialCode, notice, onEntered 
   useEffect(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) setIdentity(JSON.parse(saved) as Identity);
+      if (saved) {
+        const parsed = JSON.parse(saved) as Identity;
+        setIdentity({
+          ...parsed,
+          emoji: resolveAvatarUrl(parsed.emoji, parsed.name)
+        });
+      }
     } catch {
       // first visit — nothing saved yet
     }
@@ -104,8 +111,9 @@ export function EntryScreen({ socket, connected, initialCode, notice, onEntered 
     <main className="relative z-10 mx-auto flex h-dvh w-full max-w-[1720px] flex-col items-center justify-center gap-4 overflow-hidden px-4 py-4 md:flex-row md:items-center md:justify-between md:px-8 lg:px-12 xl:px-16">
       {/* Left side: intimate quote in bold, moved slightly top & right, hidden on mobile */}
       <aside className="hidden animate-rise-in md:flex md:max-w-[340px] md:self-center md:-translate-y-8 md:translate-x-5 md:flex-col md:text-left lg:max-w-[420px] lg:-translate-y-10 lg:translate-x-8 xl:max-w-[450px] xl:translate-x-12">
-        <div className="mb-3 inline-flex w-fit items-center gap-2 rounded-full border border-white/25 bg-black/25 px-3.5 py-1 shadow-sm backdrop-blur-md">
-          <span className="h-2 w-2 rounded-full bg-[var(--amber)] shadow-[0_0_10px_var(--amber)]" />
+        <div className="mb-3 inline-flex w-fit items-center gap-2 rounded-full border border-white/25 bg-black/25 py-1 pl-1.5 pr-3.5 shadow-sm backdrop-blur-md">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/favicon-32x32.png" alt="Rooftop.fm logo" className="h-4 w-4 rounded-full object-cover" />
           <span className="text-xs font-extrabold uppercase tracking-[0.2em] text-[var(--honey)]">Rooftop.fm</span>
         </div>
         <blockquote
@@ -128,8 +136,9 @@ export function EntryScreen({ socket, connected, initialCode, notice, onEntered 
         <div className="mb-5 flex items-center gap-3.5">
           <div className="relative flex h-12 w-12 shrink-0 items-center justify-center">
             <span className="absolute inset-0 rounded-full bg-[var(--amber)]/35 blur-lg animate-breathe" />
-            <span className="relative flex h-12 w-12 items-center justify-center rounded-full border border-white/25 bg-white/10 shadow-inner backdrop-blur-md">
-              <Disc3 className="h-6 w-6 animate-vinyl text-[var(--amber)]" />
+            <span className="relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-full border-2 border-white/30 shadow-lg backdrop-blur-md">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/favicon-96x96.png" alt="Rooftop.fm logo" className="h-full w-full object-cover animate-vinyl" />
             </span>
           </div>
           <div>
@@ -158,13 +167,32 @@ export function EntryScreen({ socket, connected, initialCode, notice, onEntered 
               Your name
             </span>
             <div className="flex items-center gap-2">
-              <span
-                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/25 text-xl shadow-inner backdrop-blur-md"
+              <button
+                type="button"
+                onClick={() => {
+                  const next = randomAvatar(identity.emoji);
+                  setIdentity((prev) => ({
+                    ...prev,
+                    emoji: next.url,
+                    color: next.color
+                  }));
+                }}
+                title="Click to randomize avatar"
+                aria-label="Change profile picture"
+                className="group relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-white/30 shadow-md backdrop-blur-md transition-all duration-200 hover:scale-105 hover:border-white/60 active:scale-95 focus:outline-none focus:ring-2 focus:ring-[var(--amber)]"
                 style={{ backgroundColor: `${identity.color}30` }}
-                aria-hidden
               >
-                {identity.emoji}
-              </span>
+                <Avatar
+                  src={identity.emoji}
+                  name={identity.name}
+                  size={88}
+                  priority
+                  className="h-full w-full rounded-full object-cover transition-transform duration-300 group-hover:scale-105"
+                />
+                <span className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+                  <Dices className="h-4 w-4 text-white drop-shadow" />
+                </span>
+              </button>
               <input
                 value={identity.name}
                 onChange={(e) => onNameChange(e.target.value)}
@@ -175,8 +203,8 @@ export function EntryScreen({ socket, connected, initialCode, notice, onEntered 
               <button
                 type="button"
                 onClick={() => setIdentity(randomIdentity())}
-                title="Pick a cozy name for me"
-                className="btn-soft flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border-white/20 bg-white/10"
+                title="Randomize name & avatar"
+                className="btn-soft flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border-white/20 bg-white/10 transition-transform active:scale-95 hover:scale-105"
               >
                 <Dices className="h-4 w-4" />
               </button>

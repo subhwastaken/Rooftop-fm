@@ -43,8 +43,14 @@ const STATE_ENDED = 0;
 const STATE_PLAYING = 1;
 const STATE_BUFFERING = 3;
 
-// Tight sync tolerance: keeps both listeners locked to the exact beat (< 350ms offset)
-const DRIFT_TOLERANCE_SEC = 0.35;
+// Sync tolerance before we hard-seek the player. Too tight (<1s) makes phones fight the
+// shared clock: every seek forces YouTube to re-buffer, which causes more drift, which
+// causes another seek -> the audio stutters / stops mid-song.
+const DRIFT_TOLERANCE_SEC = 1.2;
+// Minimum gap between two automatic corrective seeks.
+const SEEK_COOLDOWN_MS = 8000;
+// After the player finishes buffering, give it time to settle before judging drift.
+const BUFFER_GRACE_MS = 3000;
 
 interface SyncedAudioEngineProps {
   playback: PlaybackState;
@@ -75,6 +81,8 @@ export function SyncedAudioEngine({
   const clockOffsetRef = useRef(clockOffsetMs);
   const volumeRef = useRef(volume);
   const onTrackEndedRef = useRef(onTrackEnded);
+  const lastSeekAtRef = useRef(0);
+  const lastBufferAtRef = useRef(0);
   const [needsTap, setNeedsTap] = useState(false);
 
   playbackRef.current = playback;
@@ -105,7 +113,9 @@ export function SyncedAudioEngine({
       }
 
       const isLive = state.currentTrack.durationSec === 0 && Number(player.getDuration?.() || 0) === 0;
-      if (!isLive && Math.abs(Number(player.getCurrentTime?.() || 0) - expected) > DRIFT_TOLERANCE_SEC) {
+      // Explicit room actions (seek / resume) re-baseline the timeline, so correct them promptly.
+      if (!isLive && Math.abs(Number(player.getCurrentTime?.() || 0) - expected) > 0.8) {
+        lastSeekAtRef.current = Date.now();
         player.seekTo(expected, true);
       }
 
@@ -135,6 +145,7 @@ export function SyncedAudioEngine({
           },
           onStateChange: (e) => {
             if (cancelled) return;
+            if (e.data === STATE_BUFFERING) lastBufferAtRef.current = Date.now();
             if (e.data === STATE_PLAYING) {
               setNeedsTap(false);
               // If the room is paused, never let a stray play slip through.
@@ -142,10 +153,14 @@ export function SyncedAudioEngine({
                 e.target.pauseVideo();
                 return;
               }
-              // Immediately snap to the shared timeline as soon as buffering completes
+              // Only snap if we're clearly off the shared timeline (and not mid-correction).
               const expected = expectedPosition(playbackRef.current);
               const current = Number(e.target.getCurrentTime?.() || 0);
-              if (Math.abs(current - expected) > 0.25) {
+              if (
+                Math.abs(current - expected) > DRIFT_TOLERANCE_SEC &&
+                Date.now() - lastSeekAtRef.current > SEEK_COOLDOWN_MS
+              ) {
+                lastSeekAtRef.current = Date.now();
                 e.target.seekTo(expected, true);
               }
             }
@@ -223,7 +238,17 @@ export function SyncedAudioEngine({
       }
 
       const isLive = duration === 0 && state.currentTrack.durationSec === 0;
-      if (state.isPlaying && ytState === STATE_PLAYING && !isLive && Math.abs(current - expected) > DRIFT_TOLERANCE_SEC) {
+      const now = Date.now();
+      const settled =
+        now - lastSeekAtRef.current > SEEK_COOLDOWN_MS && now - lastBufferAtRef.current > BUFFER_GRACE_MS;
+      if (
+        state.isPlaying &&
+        ytState === STATE_PLAYING &&
+        !isLive &&
+        settled &&
+        Math.abs(current - expected) > DRIFT_TOLERANCE_SEC
+      ) {
+        lastSeekAtRef.current = now;
         player.seekTo(expected, true);
       }
     }, 500);
@@ -254,7 +279,7 @@ export function SyncedAudioEngine({
         className={
           showVideo
             ? "fixed bottom-20 right-3 z-40 aspect-video w-[300px] overflow-hidden rounded-2xl border border-[var(--line)] bg-black shadow-2xl lg:bottom-4 lg:left-4 lg:right-auto"
-            : "pointer-events-none fixed -left-[9999px] top-0 h-[180px] w-[320px] opacity-0"
+            : "pointer-events-none fixed left-0 top-0 -z-10 h-[180px] w-[320px] opacity-[0.01]"
         }
       >
         <div ref={containerRef} className="h-full w-full" />

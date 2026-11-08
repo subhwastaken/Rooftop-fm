@@ -1,0 +1,19 @@
+{
+  "0": "package.json",
+  "1": "search/route.ts",
+  "2": "ChannelRoom.tsx",
+  "3": "server.mjs",
+  "4": "types.ts",
+  "5": "useCall.ts",
+  "6": "identity.ts",
+  "7": "compilerOptions",
+  "8": "NowPlayingStage.tsx",
+  "9": "services",
+  "10": "page.tsx",
+  "11": "eslint.config.mjs",
+  "12": "CozyAmbientMixer",
+  "13": "yt-search.d.ts",
+  "14": "next.config.mjs",
+  "15": "postcss.config.mjs",
+  "16": "next-env.d.ts"
+}

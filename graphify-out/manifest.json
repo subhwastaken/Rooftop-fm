@@ -60,10 +60,10 @@
     "semantic_hash": "99574284f84ce1c7f62930e8c4bec90e"
   },
   "src/app/layout.tsx": {
-    "mtime": 1794082581.86,
-    "seen": 1794122624.912122,
-    "ast_hash": "01307a40e17a6f3cd3638ee1885f0a9b",
-    "semantic_hash": "01307a40e17a6f3cd3638ee1885f0a9b"
+    "mtime": 1794122699.12,
+    "seen": 1794123002.93253,
+    "ast_hash": "176e4826a50914b97b8db2186dd6ea30",
+    "semantic_hash": ""
   },
   "src/app/page.tsx": {
     "mtime": 1794080093.54,
@@ -126,10 +126,10 @@
     "semantic_hash": "cbe110827849ac78937733170ea921b0"
   },
   "src/components/SyncedYouTubeEngine.tsx": {
-    "mtime": 1794072994.81,
-    "seen": 1794122624.912127,
-    "ast_hash": "70cc1e5407ffe114cabc085bba7d41e5",
-    "semantic_hash": "70cc1e5407ffe114cabc085bba7d41e5"
+    "mtime": 1794122992.05,
+    "seen": 1794123002.932537,
+    "ast_hash": "488ba3ee80e74cc1d1995900a051de4c",
+    "semantic_hash": ""
   },
   "src/components/ToneArm.tsx": {
     "mtime": 1794077340.68,
@@ -214,5 +214,293 @@
     "seen": 1794122624.912134,
     "ast_hash": "e9bb335fdf40834be85d0d387be10fbc",
     "semantic_hash": "e9bb335fdf40834be85d0d387be10fbc"
+  },
+  "README.md": {
+    "mtime": 1794077491.47,
+    "seen": 1794123002.932544,
+    "ast_hash": "1b64fb6bdfd0ea25bf9fedfe579793e5",
+    "semantic_hash": ""
+  },
+  "public/apple-touch-icon.png": {
+    "mtime": 1794085530.02,
+    "seen": 1794123002.932545,
+    "ast_hash": "c6085f61ca0d5d4d71dac0f96527a5f5",
+    "semantic_hash": ""
+  },
+  "public/avatars/avatar-01.png": {
+    "mtime": 1794078213.91,
+    "seen": 1794123002.9325461,
+    "ast_hash": "776a534d6a8a0bf04978a1b35b9c7a8d",
+    "semantic_hash": ""
+  },
+  "public/avatars/avatar-02.png": {
+    "mtime": 1794078213.94,
+    "seen": 1794123002.9325461,
+    "ast_hash": "dfc3fb5d2ef25ee4d87052c36db9b4cf",
+    "semantic_hash": ""
+  },
+  "public/avatars/avatar-03.png": {
+    "mtime": 1794078213.98,
+    "seen": 1794123002.9325461,
+    "ast_hash": "55186d157b5d2cb737ba5d1e9ead5a46",
+    "semantic_hash": ""
+  },
+  "public/avatars/avatar-04.png": {
+    "mtime": 1794078214.01,
+    "seen": 1794123002.932547,
+    "ast_hash": "7685d93d5cce5808205c2722c2498c08",
+    "semantic_hash": ""
+  },
+  "public/avatars/avatar-05.png": {
+    "mtime": 1794078214.05,
+    "seen": 1794123002.932547,
+    "ast_hash": "7b565f2ee6cded045216d81dc747d335",
+    "semantic_hash": ""
+  },
+  "public/avatars/avatar-06.png": {
+    "mtime": 1794078214.08,
+    "seen": 1794123002.932548,
+    "ast_hash": "ace1c9b7bd3818f7d8844b3b31e8e52f",
+    "semantic_hash": ""
+  },
+  "public/avatars/avatar-07.png": {
+    "mtime": 1794078214.11,
+    "seen": 1794123002.9325492,
+    "ast_hash": "30de6d04f2ee08946c92c2509579e068",
+    "semantic_hash": ""
+  },
+  "public/avatars/avatar-08.png": {
+    "mtime": 1794078214.15,
+    "seen": 1794123002.9325492,
+    "ast_hash": "3d95a7772b6a63a9b6080866dc8f23f1",
+    "semantic_hash": ""
+  },
+  "public/avatars/avatar-09.png": {
+    "mtime": 1794078214.19,
+    "seen": 1794123002.93255,
+    "ast_hash": "30cca2311daf55be090c577135f239e9",
+    "semantic_hash": ""
+  },
+  "public/avatars/avatar-10.png": {
+    "mtime": 1794078214.22,
+    "seen": 1794123002.93255,
+    "ast_hash": "ded7b7665313af0e979718af2eccf124",
+    "semantic_hash": ""
+  },
+  "public/avatars/avatar-11.png": {
+    "mtime": 1794078214.26,
+    "seen": 1794123002.93255,
+    "ast_hash": "597d527281c4a25863d1f06e405aa779",
+    "semantic_hash": ""
+  },
+  "public/avatars/avatar-12.png": {
+    "mtime": 1794078214.29,
+    "seen": 1794123002.932551,
+    "ast_hash": "dfca2deed5f576bcfe3a7f30c3927d38",
+    "semantic_hash": ""
+  },
+  "public/avatars/avatar-13.png": {
+    "mtime": 1794078214.32,
+    "seen": 1794123002.932551,
+    "ast_hash": "fafd68117788181c55214e996eb268ec",
+    "semantic_hash": ""
+  },
+  "public/avatars/avatar-14.png": {
+    "mtime": 1794078214.36,
+    "seen": 1794123002.9325519,
+    "ast_hash": "168691cb227b1364a1f5efa1cca2cdb5",
+    "semantic_hash": ""
+  },
+  "public/avatars/avatar-15.png": {
+    "mtime": 1794078214.39,
+    "seen": 1794123002.9325519,
+    "ast_hash": "beadb5abdd0433a2a60e98080cf81b94",
+    "semantic_hash": ""
+  },
+  "public/avatars/avatar-16.png": {
+    "mtime": 1794078214.43,
+    "seen": 1794123002.932553,
+    "ast_hash": "b50a69e9c6aa0926099faab281bd1b4a",
+    "semantic_hash": ""
+  },
+  "public/avatars/avatar-17.png": {
+    "mtime": 1794078214.46,
+    "seen": 1794123002.932553,
+    "ast_hash": "5c55fd8450123a8f9b1aae7056435de4",
+    "semantic_hash": ""
+  },
+  "public/avatars/avatar-18.png": {
+    "mtime": 1794078214.5,
+    "seen": 1794123002.932554,
+    "ast_hash": "207da718b9d23a611eea1a32ccc819ce",
+    "semantic_hash": ""
+  },
+  "public/avatars/avatar-19.png": {
+    "mtime": 1794078214.53,
+    "seen": 1794123002.932554,
+    "ast_hash": "e3c483eeeac5d4d46e3774b64b0e3490",
+    "semantic_hash": ""
+  },
+  "public/avatars/avatar-20.png": {
+    "mtime": 1794078214.57,
+    "seen": 1794123002.932555,
+    "ast_hash": "e80e555e9f83bdeeb649e64b770bee5a",
+    "semantic_hash": ""
+  },
+  "public/avatars/avatar-21.png": {
+    "mtime": 1794078214.6,
+    "seen": 1794123002.932555,
+    "ast_hash": "63e2f52566e41f82dba07d2e9a44da0d",
+    "semantic_hash": ""
+  },
+  "public/avatars/avatar-22.png": {
+    "mtime": 1794078214.64,
+    "seen": 1794123002.932555,
+    "ast_hash": "dcc8f69fc12f6e2081aa37474ecac917",
+    "semantic_hash": ""
+  },
+  "public/avatars/avatar-23.png": {
+    "mtime": 1794078214.67,
+    "seen": 1794123002.932556,
+    "ast_hash": "afe933ce48a13560e6d9587cb8bd733a",
+    "semantic_hash": ""
+  },
+  "public/avatars/avatar-24.png": {
+    "mtime": 1794078214.71,
+    "seen": 1794123002.932556,
+    "ast_hash": "1f02afe3c2c0cc033a7f2396f8e91f3c",
+    "semantic_hash": ""
+  },
+  "public/avatars/avatar-25.png": {
+    "mtime": 1794078214.75,
+    "seen": 1794123002.932557,
+    "ast_hash": "8fcfb5f179752c6cd1b579cc4644111b",
+    "semantic_hash": ""
+  },
+  "public/avatars/avatar-26.png": {
+    "mtime": 1794078214.78,
+    "seen": 1794123002.932557,
+    "ast_hash": "a95321b0fdaabd4d3e7a398fdefb147a",
+    "semantic_hash": ""
+  },
+  "public/avatars/avatar-27.png": {
+    "mtime": 1794078214.82,
+    "seen": 1794123002.932557,
+    "ast_hash": "b5d85612173643e2463add994601f160",
+    "semantic_hash": ""
+  },
+  "public/avatars/avatar-28.png": {
+    "mtime": 1794078214.85,
+    "seen": 1794123002.932558,
+    "ast_hash": "beea8de5259ad0133f13363fae1100ab",
+    "semantic_hash": ""
+  },
+  "public/avatars/avatar-29.png": {
+    "mtime": 1794078214.89,
+    "seen": 1794123002.932558,
+    "ast_hash": "24a76a43a7eb9c00401741d356199094",
+    "semantic_hash": ""
+  },
+  "public/avatars/avatar-30.png": {
+    "mtime": 1794078214.92,
+    "seen": 1794123002.932559,
+    "ast_hash": "fda96dc69bc45b85b8de4b967fd9bb7d",
+    "semantic_hash": ""
+  },
+  "public/avatars/avatar-31.png": {
+    "mtime": 1794078214.96,
+    "seen": 1794123002.932559,
+    "ast_hash": "1658037dc556b9f338188069b95a866d",
+    "semantic_hash": ""
+  },
+  "public/avatars/avatar-32.png": {
+    "mtime": 1794078214.99,
+    "seen": 1794123002.93256,
+    "ast_hash": "bff650f8d523f639045aeef1ebe99a6d",
+    "semantic_hash": ""
+  },
+  "public/bg-day.jpg": {
+    "mtime": 1794040044.37,
+    "seen": 1794123002.93256,
+    "ast_hash": "02acda80122d488fa7956810c41b0853",
+    "semantic_hash": ""
+  },
+  "public/bg-night.jpg": {
+    "mtime": 1794040044.36,
+    "seen": 1794123002.932561,
+    "ast_hash": "a565acb6a057e3a9510e057b3bcb6e12",
+    "semantic_hash": ""
+  },
+  "public/bg-sunset.jpg": {
+    "mtime": 1794040044.38,
+    "seen": 1794123002.932561,
+    "ast_hash": "797a6bc255d3099bdf3e46459cef9fcc",
+    "semantic_hash": ""
+  },
+  "public/favicon-16x16.png": {
+    "mtime": 1794085530.05,
+    "seen": 1794123002.932561,
+    "ast_hash": "e01ba65e506b082434e68b795e8fdc93",
+    "semantic_hash": ""
+  },
+  "public/favicon-32x32.png": {
+    "mtime": 1794085530.05,
+    "seen": 1794123002.9325619,
+    "ast_hash": "3b3e3fcd24c38dc730c70340b9d5ac41",
+    "semantic_hash": ""
+  },
+  "public/favicon-48x48.png": {
+    "mtime": 1794085530.04,
+    "seen": 1794123002.9325619,
+    "ast_hash": "d46f9dc3937425296cae4d728e5c0f43",
+    "semantic_hash": ""
+  },
+  "public/favicon-96x96.png": {
+    "mtime": 1794085530.04,
+    "seen": 1794123002.9325628,
+    "ast_hash": "93bb60123d30a0638a60d644def39a9f",
+    "semantic_hash": ""
+  },
+  "public/favicon.svg": {
+    "mtime": 1794085530.09,
+    "seen": 1794123002.9325628,
+    "ast_hash": "7d18ea61c814895a1db5b7cd43cbc7f4",
+    "semantic_hash": ""
+  },
+  "public/icon-192.png": {
+    "mtime": 1794085530.01,
+    "seen": 1794123002.932564,
+    "ast_hash": "be84a87d9bfee1ab1425b118f698d1cf",
+    "semantic_hash": ""
+  },
+  "public/icon-512.png": {
+    "mtime": 1794085529.96,
+    "seen": 1794123002.932564,
+    "ast_hash": "c75e0ebf37f6e3b99921518ecdbf7bc1",
+    "semantic_hash": ""
+  },
+  "public/logo.jpg": {
+    "mtime": 1794085529.59,
+    "seen": 1794123002.932565,
+    "ast_hash": "8d25d541c19f2f6f9875ebedf160b03e",
+    "semantic_hash": ""
+  },
+  "public/logo.png": {
+    "mtime": 1794085529.58,
+    "seen": 1794123002.932565,
+    "ast_hash": "a7d174d45ed803a5164735fb53ba9f8e",
+    "semantic_hash": ""
+  },
+  "public/logo.svg": {
+    "mtime": 1794085530.1,
+    "seen": 1794123002.932566,
+    "ast_hash": "96cebf5fe0c37cb2574a41c7bd3feafc",
+    "semantic_hash": ""
+  },
+  "package-lock.json": {
+    "mtime": 1793981817.44,
+    "seen": 1794123002.9325671,
+    "ast_hash": "2fcbf5b75581d16e1a154b2b2e4cd56e",
+    "semantic_hash": ""
   }
 }

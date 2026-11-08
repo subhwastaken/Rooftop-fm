@@ -10,4 +10,7 @@ dist/
 .env
 **/.DS_Store
 **/._*
-graphify-out/cache/
+
+# local tooling output
+graphify-out/
+.agents/

@@ -11,6 +11,9 @@ const handle = app.getRequestHandler();
 
 const MAX_PARTICIPANTS = 8;
 const EMPTY_ROOM_TTL_MS = 1000 * 60 * 120;
+const MAX_ROOMS = 500;
+const MAX_QUEUE_LENGTH = 100;
+const RATE_LIMIT_PER_2S = 40;
 const CODE_WORDS = ["MOON", "RAIN", "COZY", "LAMP", "DUSK", "WAVE", "TAPE", "GLOW", "NEST", "HUSH", "DAWN", "MIST"];
 
 /** @type {Map<string, any>} */
@@ -182,7 +185,13 @@ app.prepare().then(() => {
 
   const io = new SocketIOServer(httpServer, {
     path: "/api/socketio",
-    cors: { origin: "*" }
+    cors: { origin: "*" },
+    // Phones that lock the screen or hop networks go quiet for a while; be patient before
+    // evicting them (which would spam "left/joined" and drop them from the room).
+    pingInterval: 20000,
+    pingTimeout: 60000,
+    // Chat/queue/WebRTC signalling payloads are tiny; refuse oversized frames.
+    maxHttpBufferSize: 1e5
   });
 
   const emitPresence = (room) => io.to(room.code).emit("room:presence", presence(room));
@@ -212,9 +221,22 @@ app.prepare().then(() => {
 
     const currentRoom = () => (activeCode ? rooms.get(activeCode) ?? null : null);
 
+    // Simple per-socket flood guard so one client can't spam chat/queue/reactions.
+    let windowStart = Date.now();
+    let windowCount = 0;
+    const withinRateLimit = () => {
+      const now = Date.now();
+      if (now - windowStart > 2000) {
+        windowStart = now;
+        windowCount = 0;
+      }
+      return ++windowCount <= RATE_LIMIT_PER_2S;
+    };
+
     const guard =
       (fn) =>
       (...args) => {
+        if (!withinRateLimit()) return;
         const room = currentRoom();
         const me = room?.participants.get(socket.id);
         if (room && me) fn(room, me, ...args);
@@ -283,6 +305,7 @@ app.prepare().then(() => {
       const reply = typeof ack === "function" ? ack : () => {};
       const user = sanitizeUser(payload);
       if (!user) return reply({ ok: false, error: "Please tell us your name first." });
+      if (rooms.size >= MAX_ROOMS) return reply({ ok: false, error: "Rooftop is busy right now. Please try again in a bit." });
 
       const code = generateCode();
       const roomName = cleanText(payload?.roomName, 40) || `${user.name}'s channel`;
@@ -303,7 +326,7 @@ app.prepare().then(() => {
       let room = rooms.get(code);
       if (!room) {
         // Transparent auto-restoration if server restarted/redeployed while clients were active
-        if (payload?.reconnect && code) {
+        if (payload?.reconnect && code && rooms.size < MAX_ROOMS) {
           const roomName = cleanText(payload?.roomName, 40) || `${user.name}'s channel`;
           room = createRoom(code, roomName);
           room.messages.push(systemMessage(`“${roomName}” is ready. Reconnected to room.`));
@@ -438,6 +461,7 @@ app.prepare().then(() => {
         if (!room.playback.currentTrack) {
           startTrack(room, track, `${me.name} played a new song`);
         } else {
+          if (room.queue.length >= MAX_QUEUE_LENGTH) return;
           room.queue.push(track);
           io.to(room.code).emit("queue:update", room.queue);
         }

@@ -31,7 +31,17 @@ export function useSocket() {
     instance.on("disconnect", onDisconnect);
     instance.on("connect_error", onConnectError);
 
+    // Phones freeze background tabs; reconnect right away when the user comes back
+    // instead of waiting for the next backoff retry.
+    const onVisible = () => {
+      if (document.visibilityState === "visible" && !instance.connected) instance.connect();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    window.addEventListener("online", onVisible);
+
     return () => {
+      document.removeEventListener("visibilitychange", onVisible);
+      window.removeEventListener("online", onVisible);
       instance.off("connect", onConnect);
       instance.off("disconnect", onDisconnect);
       instance.off("connect_error", onConnectError);

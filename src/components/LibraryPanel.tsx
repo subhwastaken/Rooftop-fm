@@ -22,6 +22,9 @@ interface LibraryPanelProps {
 
 const MOODS = ["lofi beats", "acoustic chill", "late night drive", "bollywood unwind"];
 
+// In-memory client cache so previously resolved songs load with 0ms delay
+const clientResolvedCache = new Map<string, { youtubeId: string; durationSec: number }>();
+
 export function LibraryPanel({
   queue,
   currentSec,
@@ -78,9 +81,29 @@ export function LibraryPanel({
       });
       const data = (await res.json()) as { results?: SearchResultItem[] };
       if (!controller.signal.aborted) {
-        setResults(data.results ?? []);
+        const list = data.results ?? [];
+        setResults(list);
         setSearched(true);
         setSearching(false);
+
+        // Pre-resolve the top 1-2 items in the background so tapping "Play" is instantaneous
+        for (const it of list.slice(0, 2)) {
+          if (!it.youtubeId && it.title) {
+            const cacheKey = `${it.artist.toLowerCase()}::${it.title.toLowerCase()}`;
+            if (!clientResolvedCache.has(cacheKey)) {
+              fetch(
+                `/api/resolve?title=${encodeURIComponent(it.title)}&artist=${encodeURIComponent(it.artist)}&duration=${it.durationSec}`
+              )
+                .then((r) => (r.ok ? r.json() : null))
+                .then((resolved) => {
+                  if (resolved?.youtubeId) {
+                    clientResolvedCache.set(cacheKey, resolved);
+                  }
+                })
+                .catch(() => {});
+            }
+          }
+        }
       }
     } catch (err) {
       if ((err as Error)?.name === "AbortError") return;
@@ -142,13 +165,23 @@ export function LibraryPanel({
       let durationSec = item.durationSec;
 
       if (!youtubeId) {
-        const res = await fetch(
-          `/api/resolve?title=${encodeURIComponent(item.title)}&artist=${encodeURIComponent(item.artist)}&duration=${item.durationSec}`
-        );
-        if (!res.ok) return;
-        const resolved = (await res.json()) as { youtubeId: string; durationSec: number };
-        youtubeId = resolved.youtubeId;
-        durationSec = resolved.durationSec || item.durationSec;
+        const cacheKey = `${item.artist.toLowerCase()}::${item.title.toLowerCase()}`;
+        const cached = clientResolvedCache.get(cacheKey);
+        if (cached?.youtubeId) {
+          youtubeId = cached.youtubeId;
+          durationSec = cached.durationSec || item.durationSec;
+        } else {
+          const res = await fetch(
+            `/api/resolve?title=${encodeURIComponent(item.title)}&artist=${encodeURIComponent(item.artist)}&duration=${item.durationSec}`
+          );
+          if (!res.ok) return;
+          const resolved = (await res.json()) as { youtubeId: string; durationSec: number };
+          youtubeId = resolved.youtubeId;
+          durationSec = resolved.durationSec || item.durationSec;
+          if (youtubeId) {
+            clientResolvedCache.set(cacheKey, { youtubeId, durationSec });
+          }
+        }
       }
       if (!youtubeId) return;
 

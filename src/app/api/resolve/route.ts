@@ -3,6 +3,10 @@ import ytSearch from "yt-search";
 
 export const runtime = "nodejs";
 
+const CACHE_HEADERS = {
+  "Cache-Control": "public, max-age=604800, s-maxage=604800, stale-while-revalidate=86400"
+};
+
 const resolveCache = new Map<string, { youtubeId: string; durationSec: number }>();
 
 export async function GET(req: NextRequest) {
@@ -17,7 +21,7 @@ export async function GET(req: NextRequest) {
   const cacheKey = `${artist.toLowerCase()}::${title.toLowerCase()}`;
   const cached = resolveCache.get(cacheKey);
   if (cached) {
-    return NextResponse.json(cached);
+    return NextResponse.json(cached, { headers: CACHE_HEADERS });
   }
 
   try {
@@ -71,7 +75,7 @@ export async function GET(req: NextRequest) {
     }
     resolveCache.set(cacheKey, payload);
 
-    return NextResponse.json(payload);
+    return NextResponse.json(payload, { headers: CACHE_HEADERS });
   } catch (error) {
     console.error("Resolve error:", error);
     return NextResponse.json({ error: "Failed to resolve audio" }, { status: 500 });

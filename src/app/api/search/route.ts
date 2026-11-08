@@ -6,9 +6,13 @@ export const runtime = "nodejs";
 
 function extractYouTubeId(input: string): string | null {
   const match = input.match(
-    /(?:youtube\.com\/watch\?v=|youtu\.be\/|music\.youtube\.com\/watch\?v=|youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/
+    /(?:youtube\.com\/(?:watch\?.*v=|embed\/|shorts\/)|youtu\.be\/|music\.youtube\.com\/watch\?.*v=)([a-zA-Z0-9_-]{11})/
   );
-  return match ? match[1] : null;
+  if (match) return match[1];
+  if (/^[a-zA-Z0-9_-]{11}$/.test(input.trim())) {
+    return input.trim();
+  }
+  return null;
 }
 
 function isSpotifyTrackUrl(input: string): boolean {
@@ -78,20 +82,41 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    // 1. Direct YouTube / YouTube Music link
+    // 1. Direct YouTube / YouTube Music link (instant resolution via lightweight oEmbed API)
     const ytId = extractYouTubeId(q);
     if (ytId) {
-      const video = await ytSearch({ videoId: ytId });
+      let title = "YouTube Audio";
+      let artist = "YouTube";
+      let coverUrl = `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg`;
+
+      try {
+        const oembedRes = await fetch(
+          `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${ytId}&format=json`,
+          { next: { revalidate: 86400 } }
+        );
+        if (oembedRes.ok) {
+          const oembed = (await oembedRes.json()) as { title?: string; author_name?: string; thumbnail_url?: string };
+          if (oembed.title) title = oembed.title;
+          if (oembed.author_name) artist = oembed.author_name;
+          if (oembed.thumbnail_url) coverUrl = oembed.thumbnail_url;
+        }
+      } catch {
+        // Fallback to defaults
+      }
+
       const item: SearchResultItem = {
-        id: `yt-${video.videoId}`,
-        title: video.title,
-        artist: video.author?.name || "YouTube Audio",
-        coverUrl: video.thumbnail || `https://i.ytimg.com/vi/${video.videoId}/hqdefault.jpg`,
-        durationSec: video.seconds || 0,
-        youtubeId: video.videoId,
+        id: `yt-${ytId}`,
+        title,
+        artist,
+        coverUrl,
+        durationSec: 0,
+        youtubeId: ytId,
         source: "youtube"
       };
-      return NextResponse.json({ results: [item] });
+      return NextResponse.json(
+        { results: [item] },
+        { headers: { "Cache-Control": "public, max-age=86400, s-maxage=86400" } }
+      );
     }
 
     // 2. Direct Spotify Track link (free, no Premium required!)

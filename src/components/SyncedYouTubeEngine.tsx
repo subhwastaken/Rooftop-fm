@@ -29,6 +29,7 @@ declare global {
           events?: {
             onReady?: (e: { target: YTPlayer }) => void;
             onStateChange?: (e: { data: number; target: YTPlayer }) => void;
+            onError?: (e: { data: number; target: YTPlayer }) => void;
           };
         }
       ) => YTPlayer;
@@ -149,6 +150,14 @@ export function SyncedAudioEngine({
               }
             }
             if (e.data === STATE_ENDED && playbackRef.current.currentTrack) {
+              onTrackEndedRef.current(playbackRef.current.currentTrack.id);
+            }
+          },
+          onError: (e) => {
+            if (cancelled) return;
+            console.warn("YouTube player error:", e.data);
+            // 100: not found, 101/150: embed restricted by copyright holder
+            if ((e.data === 100 || e.data === 101 || e.data === 150) && playbackRef.current.currentTrack) {
               onTrackEndedRef.current(playbackRef.current.currentTrack.id);
             }
           }

@@ -71,21 +71,42 @@ export function NowPlayingStage({
   onCopyInvite
 }: NowPlayingStageProps) {
   const [scrubbing, setScrubbing] = useState<number | null>(null);
+  const [seekingTo, setSeekingTo] = useState<number | null>(null);
   const [hearted, setHearted] = useState(false);
 
   const track = playback.currentTrack;
   const duration = durationSec > 0 ? durationSec : (track?.durationSec ?? 0);
   const isLive = Boolean(track) && duration <= 0;
-  const shown = scrubbing ?? currentSec;
+
+  // Prevent slider bounce-back: hold optimistic seek position until player catches up
+  useEffect(() => {
+    if (seekingTo !== null) {
+      if (Math.abs(currentSec - seekingTo) <= 1.5) {
+        setSeekingTo(null);
+      } else {
+        const timer = window.setTimeout(() => setSeekingTo(null), 2500);
+        return () => window.clearTimeout(timer);
+      }
+    }
+  }, [currentSec, seekingTo]);
+
+  const shown = scrubbing ?? seekingTo ?? currentSec;
   const progress = duration > 0 ? Math.min(1, Math.max(0, shown / duration)) : 0;
 
   const others = participants.filter((p) => p.socketId !== selfId);
   const alone = others.length === 0;
   const together_ = !alone;
 
-  const commitSeek = () => {
-    if (scrubbing !== null) {
-      onSeek(scrubbing);
+  const commitSeek = (explicitVal?: number) => {
+    const target =
+      explicitVal !== undefined && !isNaN(explicitVal)
+        ? explicitVal
+        : scrubbing !== null
+        ? scrubbing
+        : seekingTo;
+    if (target !== null && target !== undefined && !isNaN(target)) {
+      setSeekingTo(target);
+      onSeek(target);
       setScrubbing(null);
     }
   };
@@ -191,10 +212,14 @@ export function NowPlayingStage({
           disabled={!track || isLive}
           aria-label="Song position, shared with everyone"
           style={{ "--p": `${progress * 100}%` } as React.CSSProperties}
+          onPointerDown={(e) => {
+            const v = Number((e.target as HTMLInputElement).value);
+            setScrubbing(v);
+          }}
           onChange={(e) => setScrubbing(Number(e.target.value))}
-          onPointerUp={commitSeek}
-          onKeyUp={commitSeek}
-          onBlur={commitSeek}
+          onPointerUp={(e) => commitSeek(Number((e.target as HTMLInputElement).value))}
+          onKeyUp={(e) => commitSeek(Number((e.target as HTMLInputElement).value))}
+          onBlur={() => commitSeek()}
         />
         <div className="mt-1.5 flex justify-between text-xs font-semibold tabular-nums text-[var(--ink-faint)]">
           <span>{formatClock(shown)}</span>

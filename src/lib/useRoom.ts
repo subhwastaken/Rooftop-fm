@@ -53,6 +53,8 @@ export function useRoom({ socket, initial, identity, onEnded }: UseRoomArgs) {
 
   const identityRef = useRef(identity);
   identityRef.current = identity;
+  const nameRef = useRef(name);
+  nameRef.current = name;
   const participantCountRef = useRef(initial.participants.length);
   const code = initial.code;
 
@@ -78,11 +80,11 @@ export function useRoom({ socket, initial, identity, onEnded }: UseRoomArgs) {
       setConnected(true);
       setSelfId(socket.id ?? "");
       syncClock();
-      // After a network blip the server has forgotten us — slip back into the channel.
+      // After a network blip or server restart, slip seamlessly back into the channel.
       const me = identityRef.current;
       socket.emit(
         "room:join",
-        { code, userName: me.name, userEmoji: me.emoji, userColor: me.color },
+        { code, userName: me.name, userEmoji: me.emoji, userColor: me.color, reconnect: true, roomName: nameRef.current },
         (res: JoinAck) => {
           if (res.ok && res.room) applySnapshot(res.room);
           else onEnded("That channel has ended. Start a new one or join with another code.");

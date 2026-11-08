@@ -234,7 +234,7 @@ app.prepare().then(() => {
         socket.to(room.code).emit("call:cancelled", { fromId: socket.id });
         updateTogether(room);
         emitPresence(room);
-        pushMessage(room, systemMessage(`${me.emoji} ${me.name} left`));
+        pushMessage(room, systemMessage(`👋 ${me.name} left`));
       }
 
       if (room.participants.size === 0) {
@@ -264,7 +264,7 @@ app.prepare().then(() => {
       activeCode = room.code;
       socket.join(room.code);
       updateTogether(room);
-      if (announce) pushMessage(room, systemMessage(`${me.emoji} ${me.name} joined`));
+      if (announce) pushMessage(room, systemMessage(`👋 ${me.name} joined`));
       emitPresence(room);
       return me;
     }
@@ -299,13 +299,24 @@ app.prepare().then(() => {
       const user = sanitizeUser(payload);
       if (!user) return reply({ ok: false, error: "Please tell us your name first." });
 
-      const room = rooms.get(normalizeCode(payload?.code));
-      if (!room) return reply({ ok: false, error: "We couldn't find that channel. Check the code and try again." });
+      const code = normalizeCode(payload?.code);
+      let room = rooms.get(code);
+      if (!room) {
+        // Transparent auto-restoration if server restarted/redeployed while clients were active
+        if (payload?.reconnect && code) {
+          const roomName = cleanText(payload?.roomName, 40) || `${user.name}'s channel`;
+          room = createRoom(code, roomName);
+          room.messages.push(systemMessage(`“${roomName}” is ready. Reconnected to room.`));
+          rooms.set(code, room);
+        } else {
+          return reply({ ok: false, error: "We couldn't find that channel. Check the code and try again." });
+        }
+      }
       if (room.participants.size >= MAX_PARTICIPANTS && !room.participants.has(socket.id)) {
         return reply({ ok: false, error: "This channel is full." });
       }
 
-      enterRoom(room, user, true);
+      enterRoom(room, user, !payload?.reconnect);
       reply({ ok: true, room: snapshot(room) });
     });
 

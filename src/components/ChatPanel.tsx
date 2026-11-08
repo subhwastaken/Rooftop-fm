@@ -67,10 +67,18 @@ export function ChatPanel({ participants, messages, selfId, typingNames, onSend,
 
         {messages.map((msg) => {
           if (msg.type === "system") {
+            const avatarMatch = msg.text.match(/^(\/avatars\/[^\s]+)\s+(.+)$/);
             return (
-              <p key={msg.id} className="mx-auto max-w-[92%] rounded-full px-3 py-1 text-center text-xs text-[var(--ink-faint)]">
-                {msg.text}
-              </p>
+              <div key={msg.id} className="mx-auto flex max-w-[92%] items-center justify-center gap-1.5 rounded-full px-3 py-1 text-center text-xs text-[var(--ink-faint)]">
+                {avatarMatch ? (
+                  <>
+                    <Avatar src={avatarMatch[1]} name="" size={24} className="h-4 w-4 rounded-full object-cover" />
+                    <span>{avatarMatch[2]}</span>
+                  </>
+                ) : (
+                  <span>{msg.text}</span>
+                )}
+              </div>
             );
           }
           const mine = msg.senderSocketId === selfId;

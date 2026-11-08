@@ -130,7 +130,7 @@ export function PopOutPlayer({ track, isPlaying, currentSec, durationSec, onTogg
                 flexShrink: 0,
                 borderRadius: "50%",
                 background:
-                  "radial-gradient(circle, #1e1417 0 18%, #0d080a 19% 100%), repeating-radial-gradient(circle at center, rgba(255,255,255,0.06) 0 1px, transparent 1px 3px)",
+                  "conic-gradient(from 0deg, transparent 0deg, rgba(255,255,255,0.16) 35deg, transparent 75deg, transparent 180deg, rgba(255,179,107,0.18) 215deg, transparent 255deg), repeating-radial-gradient(circle at center, rgba(255,255,255,0.05) 0 1px, transparent 1px 3px), radial-gradient(circle, #1e1417 0%, #0b0709 100%)",
                 boxShadow: spinning
                   ? "0 4px 16px rgba(255, 179, 107, 0.25), inset 0 0 0 2px rgba(255,255,255,0.12)"
                   : "0 4px 12px rgba(0,0,0,0.5), inset 0 0 0 1.5px rgba(255,255,255,0.1)",

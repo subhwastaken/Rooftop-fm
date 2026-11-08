@@ -266,7 +266,9 @@ app.prepare().then(() => {
     }
 
     function enterRoom(room, user, announce) {
-      leaveCurrentRoom();
+      if (activeCode && activeCode !== room.code) {
+        leaveCurrentRoom();
+      }
       if (room.cleanupTimer) {
         clearTimeout(room.cleanupTimer);
         room.cleanupTimer = null;

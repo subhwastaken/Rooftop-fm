@@ -495,6 +495,7 @@ export function ChannelRoom({
             onTogglePlay={room.actions.togglePlay}
             onPrev={room.actions.prev}
             onNext={room.actions.next}
+            onSeek={room.actions.seek}
           />
 
           <button

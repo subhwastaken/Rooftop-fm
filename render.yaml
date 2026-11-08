@@ -3,7 +3,7 @@ services:
     name: rooftop-fm
     env: docker
     plan: free
-    region: oregon
+    region: singapore
     dockerfilePath: Dockerfile
     healthCheckPath: /api/health
     autoDeploy: true

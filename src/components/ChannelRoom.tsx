@@ -17,7 +17,8 @@ import {
   Sparkles,
   Sun,
   Sunset,
-  Tv
+  Tv,
+  X
 } from "lucide-react";
 import { ambientMixer } from "@/lib/ambientAudio";
 import { copyText } from "@/lib/clipboard";
@@ -406,11 +407,23 @@ export function ChannelRoom({
             </div>
 
             {ambienceOpen && (
-              <div className="glass-strong absolute right-0 top-12 z-50 w-72 rounded-3xl p-4 shadow-2xl animate-rise-in">
-                <p className="font-display text-sm font-semibold text-[var(--ink)]">Room atmosphere</p>
-                <p className="mb-3 text-[11px] text-[var(--ink-faint)]">
-                  Soft sound & drizzle just on your screen.
-                </p>
+              <div className="glass-strong fixed inset-x-3 top-16 z-50 mx-auto max-w-sm rounded-3xl p-4 shadow-2xl animate-rise-in sm:absolute sm:inset-x-auto sm:right-0 sm:top-12 sm:w-72">
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <p className="font-display text-sm font-semibold text-[var(--ink)]">Room atmosphere</p>
+                    <p className="mb-3 text-[11px] text-[var(--ink-faint)]">
+                      Soft sound & drizzle just on your screen.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setAmbienceOpen(false)}
+                    aria-label="Close atmosphere settings"
+                    className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[var(--ink-soft)] transition hover:bg-white/10 hover:text-[var(--ink)] sm:hidden"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
 
                 <label className="mb-3 block">
                   <span className="mb-1.5 flex justify-between text-xs font-bold text-[var(--ink-soft)]">

@@ -23,6 +23,22 @@ const RTC_CONFIG: RTCConfiguration = {
 
 const RING_TIMEOUT_MS = 40_000;
 
+// Optional TURN relay (configured on the server via env vars); empty when not set up.
+let extraIceServers: RTCIceServer[] = [];
+let iceFetched = false;
+function loadExtraIceServers() {
+  if (iceFetched || typeof window === "undefined") return;
+  iceFetched = true;
+  fetch("/api/ice")
+    .then((r) => (r.ok ? r.json() : null))
+    .then((data: { iceServers?: RTCIceServer[] } | null) => {
+      if (data?.iceServers?.length) extraIceServers = data.iceServers;
+    })
+    .catch(() => {
+      iceFetched = false;
+    });
+}
+
 interface PeerEntry {
   pc: RTCPeerConnection;
   pending: RTCIceCandidateInit[];
@@ -78,6 +94,10 @@ export function useCall(socket: Socket) {
   const earlyCandidatesRef = useRef(new Map<string, RTCIceCandidateInit[]>());
   const ringTimerRef = useRef<number | null>(null);
   const noticeTimerRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    loadExtraIceServers();
+  }, []);
 
   const flash = useCallback((message: string) => {
     setNotice(message);
@@ -141,7 +161,10 @@ export function useCall(socket: Socket) {
   const createPeer = useCallback(
     (peerId: string, initiator: boolean): PeerEntry => {
       closePeer(peerId);
-      const pc = new RTCPeerConnection(RTC_CONFIG);
+      const pc = new RTCPeerConnection({
+        ...RTC_CONFIG,
+        iceServers: [...(RTC_CONFIG.iceServers ?? []), ...extraIceServers]
+      });
       const audio = new Audio();
       audio.autoplay = true;
       audio.setAttribute("playsinline", "true");

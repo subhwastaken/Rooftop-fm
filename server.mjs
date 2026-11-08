@@ -166,6 +166,18 @@ app.prepare().then(() => {
       res.end(JSON.stringify({ status: "ok", uptimeSec: Math.floor(process.uptime()), timestamp: Date.now() }));
       return;
     }
+    // Optional TURN relay for voice calls between strict mobile networks.
+    // Set TURN_URLS (comma separated), TURN_USERNAME and TURN_CREDENTIAL on the host to enable.
+    if (req.url === "/api/ice") {
+      const urls = (process.env.TURN_URLS || "").split(",").map((u) => u.trim()).filter(Boolean);
+      const iceServers =
+        urls.length && process.env.TURN_USERNAME && process.env.TURN_CREDENTIAL
+          ? [{ urls, username: process.env.TURN_USERNAME, credential: process.env.TURN_CREDENTIAL }]
+          : [];
+      res.writeHead(200, { "Content-Type": "application/json", "Cache-Control": "no-store" });
+      res.end(JSON.stringify({ iceServers }));
+      return;
+    }
     handle(req, res);
   });
 

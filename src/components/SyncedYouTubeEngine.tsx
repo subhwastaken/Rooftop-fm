@@ -84,6 +84,7 @@ export function SyncedAudioEngine({
   const lastSeekAtRef = useRef(0);
   const lastBufferAtRef = useRef(0);
   const [needsTap, setNeedsTap] = useState(false);
+  const [skipNotice, setSkipNotice] = useState(false);
 
   playbackRef.current = playback;
   clockOffsetRef.current = clockOffsetMs;
@@ -173,6 +174,8 @@ export function SyncedAudioEngine({
             console.warn("YouTube player error:", e.data);
             // 100: not found, 101/150: embed restricted by copyright holder
             if ((e.data === 100 || e.data === 101 || e.data === 150) && playbackRef.current.currentTrack) {
+              setSkipNotice(true);
+              window.setTimeout(() => setSkipNotice(false), 4500);
               onTrackEndedRef.current(playbackRef.current.currentTrack.id);
             }
           }
@@ -266,6 +269,11 @@ export function SyncedAudioEngine({
 
   return (
     <>
+      {skipNotice && (
+        <div className="glass-strong fixed left-1/2 top-20 z-50 -translate-x-1/2 rounded-full px-4 py-2.5 text-sm font-semibold text-[var(--ink)] animate-rise-in">
+          That song can&apos;t be played here — skipping
+        </div>
+      )}
       {needsTap && playback.isPlaying && (
         <div className="glass-strong fixed left-1/2 top-20 z-50 flex -translate-x-1/2 items-center gap-3 rounded-full px-4 py-2.5 animate-rise-in">
           <span className="text-sm font-semibold text-[var(--ink)]">Your browser is holding back the sound</span>

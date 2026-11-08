@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import type { Socket } from "socket.io-client";
 import { ArrowRight, Dices, Loader2, Plus } from "lucide-react";
-import { EMPTY_IDENTITY, identityFor, normalizeCode, randomAvatar, randomIdentity, resolveAvatarUrl } from "@/lib/identity";
+import { EMPTY_IDENTITY, getClientId, identityFor, normalizeCode, randomAvatar, randomIdentity, resolveAvatarUrl } from "@/lib/identity";
 import { Avatar } from "@/components/Avatar";
 import type { Identity, RoomSnapshot } from "@/lib/types";
 
@@ -85,7 +85,7 @@ export function EntryScreen({ socket, connected, initialCode, notice, onEntered 
     if (!socket || !canSubmit) return;
 
     const me: Identity = { ...identity, name: identity.name.trim() };
-    const payload = { userName: me.name, userEmoji: me.emoji, userColor: me.color };
+    const payload = { userName: me.name, userEmoji: me.emoji, userColor: me.color, clientId: getClientId() };
     setBusy(true);
     setError(null);
 

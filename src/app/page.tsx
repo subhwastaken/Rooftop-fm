@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Backdrop, resolveTimeOfDay } from "@/components/Backdrop";
 import { ChannelRoom, type TimePreference } from "@/components/ChannelRoom";
 import { EntryScreen } from "@/components/EntryScreen";
-import { normalizeCode } from "@/lib/identity";
+import { getClientId, normalizeCode } from "@/lib/identity";
 import type { Identity, RoomSnapshot, TimeOfDay } from "@/lib/types";
 import { useSocket } from "@/lib/useSocket";
 
@@ -109,6 +109,8 @@ export default function HomePage() {
         userName: savedIdentity.name,
         userEmoji: savedIdentity.emoji,
         userColor: savedIdentity.color,
+        clientId: getClientId(),
+        reconnect: true
       },
       (res: { ok: boolean; room?: RoomSnapshot; error?: string }) => {
         setAutoReconnecting(false);

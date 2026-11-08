@@ -166,3 +166,20 @@ export function normalizeCode(raw: string): string {
     .replace(/^([A-Z]+)(\d+)$/, "$1-$2")
     .slice(0, 14);
 }
+
+const CLIENT_ID_KEY = "rooftop:client_id";
+
+/** Persistent per-browser identifier so reconnects/refreshes replace ghost sockets instead of duplicating the user. */
+export function getClientId(): string {
+  if (typeof window === "undefined") return "";
+  try {
+    let id = localStorage.getItem(CLIENT_ID_KEY);
+    if (!id) {
+      id = `cid-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 9)}`;
+      localStorage.setItem(CLIENT_ID_KEY, id);
+    }
+    return id;
+  } catch {
+    return "";
+  }
+}

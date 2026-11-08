@@ -122,6 +122,7 @@ function sanitizeUser(payload) {
   if (!name) return null;
   return {
     name,
+    clientId: cleanText(payload?.clientId, 64) || "",
     emoji: cleanText(payload?.userEmoji ?? payload?.emoji, 128) || "/avatars/avatar-01.png",
     color: /^#[0-9a-fA-F]{6}$/.test(payload?.userColor || payload?.color || "")
       ? (payload.userColor || payload.color)
@@ -186,10 +187,8 @@ app.prepare().then(() => {
   const io = new SocketIOServer(httpServer, {
     path: "/api/socketio",
     cors: { origin: "*" },
-    // Phones that lock the screen or hop networks go quiet for a while; be patient before
-    // evicting them (which would spam "left/joined" and drop them from the room).
-    pingInterval: 20000,
-    pingTimeout: 60000,
+    pingInterval: 15000,
+    pingTimeout: 25000,
     // Chat/queue/WebRTC signalling payloads are tiny; refuse oversized frames.
     maxHttpBufferSize: 1e5
   });
@@ -273,8 +272,27 @@ app.prepare().then(() => {
         room.cleanupTimer = null;
       }
 
+      // Evict any ghost/duplicate socket from the same browser (clientId) or reconnecting user
+      // so a refresh or network blip never spawns "Name 2" alongside a ghost of "Name".
+      let replacedGhost = false;
+      for (const [peerSocketId, peer] of room.participants.entries()) {
+        if (peerSocketId === socket.id) continue;
+        const sameClient = Boolean(user.clientId && peer.clientId && peer.clientId === user.clientId);
+        const sameReconnectName = Boolean(!announce && peer.name.toLowerCase() === user.name.toLowerCase());
+        if (sameClient || sameReconnectName) {
+          room.participants.delete(peerSocketId);
+          replacedGhost = true;
+          const staleSocket = io.sockets.sockets.get(peerSocketId);
+          if (staleSocket) {
+            staleSocket.leave(room.code);
+            staleSocket.disconnect(true);
+          }
+        }
+      }
+
       const me = {
         socketId: socket.id,
+        clientId: user.clientId,
         name: uniqueName(room, user.name),
         emoji: user.emoji,
         color: user.color,
@@ -286,7 +304,7 @@ app.prepare().then(() => {
       activeCode = room.code;
       socket.join(room.code);
       updateTogether(room);
-      if (announce) pushMessage(room, systemMessage(`👋 ${me.name} joined`));
+      if (announce && !replacedGhost) pushMessage(room, systemMessage(`👋 ${me.name} joined`));
       emitPresence(room);
       return me;
     }

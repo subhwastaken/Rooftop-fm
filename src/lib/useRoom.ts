@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Socket } from "socket.io-client";
 import { playSoftPing } from "./chime";
+import { getClientId } from "./identity";
 import type {
   ChatMessage,
   FloatingReaction,
@@ -84,7 +85,15 @@ export function useRoom({ socket, initial, identity, onEnded }: UseRoomArgs) {
       const me = identityRef.current;
       socket.emit(
         "room:join",
-        { code, userName: me.name, userEmoji: me.emoji, userColor: me.color, reconnect: true, roomName: nameRef.current },
+        {
+          code,
+          userName: me.name,
+          userEmoji: me.emoji,
+          userColor: me.color,
+          clientId: getClientId(),
+          reconnect: true,
+          roomName: nameRef.current
+        },
         (res: JoinAck) => {
           if (res.ok && res.room) applySnapshot(res.room);
           else onEnded("That channel has ended. Start a new one or join with another code.");

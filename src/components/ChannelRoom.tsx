@@ -30,6 +30,7 @@ import { CallButton, IncomingCall } from "./CallControls";
 import { ChatPanel } from "./ChatPanel";
 import { LibraryPanel } from "./LibraryPanel";
 import { NowPlayingStage } from "./NowPlayingStage";
+import { PopOutPlayer } from "./PopOutPlayer";
 import { RainOverlay } from "./RainOverlay";
 import { SyncedAudioEngine } from "./SyncedYouTubeEngine";
 
@@ -486,6 +487,16 @@ export function ChannelRoom({
           </div>
 
           {/* Toggle floating video preview */}
+          <PopOutPlayer
+            track={room.playback.currentTrack}
+            isPlaying={room.playback.isPlaying}
+            currentSec={currentSec}
+            durationSec={durationSec}
+            onTogglePlay={room.actions.togglePlay}
+            onPrev={room.actions.prev}
+            onNext={room.actions.next}
+          />
+
           <button
             type="button"
             onClick={() => setShowVideo((v) => !v)}
